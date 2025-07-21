@@ -347,6 +347,18 @@ func dstFile(path string, dec *decorator.Decorator) (*dst.File, error) {
 	if err != nil {
 		return nil, err
 	}
+	cfg := &packages.Config{
+		Mode: packages.NeedName |
+			packages.NeedTypes |
+			packages.NeedSyntax |
+			packages.NeedImports |
+			packages.NeedModule |
+			packages.NeedCompiledGoFiles |
+			packages.NeedTypesInfo,
+	}
+	pkgs, _ := packages.Load(cfg, path)
+	pkg := pkgs[0]
+	astFile.Scope = pkg.Syntax[0].Scope
 
 	f, err := dec.DecorateFile(astFile)
 	if err != nil {
